@@ -11,6 +11,17 @@ type projectileResponse = {
   data: projectile;
 };
 
+type hitResponse = {
+  responseType: "Hit";
+  data: string;
+};
+
+type hit = {
+  shooter: string;
+  target: string;
+  damage: number;
+}
+
 // The type for a player helicopter
 type player = {
   id: string;
@@ -73,7 +84,7 @@ let lastRemoved = -1;
 
 const server = Bun.serve<{ id: string; playerName: string }>({
   hostname: "0.0.0.0",
-  port: "8090",
+  port: "8080",
   fetch(req, server) {
     const url = new URL(req.url);
     // Get a player name
@@ -167,6 +178,16 @@ const server = Bun.serve<{ id: string; playerName: string }>({
       
         console.log(
           `Projectile RAW: ${JSON.stringify(data)} \nSpecifics: ${data.xPos}, ${data.yPos}, ${data.zPos}`
+        );
+      
+        server.publish("all-clients", JSON.stringify(json));
+      }
+
+      if (json.responseType === "Hit") {
+        const data = JSON.parse(json.data) as hit;
+      
+        console.log(
+          `Projectile RAW: ${JSON.stringify(data)} \nSpecifics: ${data.shooter}, ${data.target}, ${data.damage}`
         );
       
         server.publish("all-clients", JSON.stringify(json));
