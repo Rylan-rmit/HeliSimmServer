@@ -84,7 +84,7 @@ let lastRemoved = -1;
 
 const server = Bun.serve<{ id: string; playerName: string }>({
   hostname: "0.0.0.0",
-  port: "8080",
+  port: "8090",
   fetch(req, server) {
     const url = new URL(req.url);
     // Get a player name
